@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flavour Fusion | Restaurant</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://www.transparenttextures.com/patterns/food.png'), linear-gradient(to right, #fff8e1, #ffe4c4);
+      background-repeat: repeat;
+      color: #333;
+      scroll-behavior: smooth;
+    }
+    header, footer {
+      background-color: #ff6f61;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    section {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .search-bar {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    .search-bar input {
+      width: 60%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .menu-filters {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .menu-list .menu-item {
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .menu-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 1rem;
+    }
+    .menu-info {
+      flex-grow: 1;
+    }
+    .menu-info h3 {
+      margin: 0;
+    }
+    .menu-item input {
+      width: 50px;
+    }
+    .menu-item button {
+      background: #ff6f61;
+      color: #fff;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff6f61;
+      color: #fff;
+      padding: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .review-box {
+      background: #fff9f0;
+      border-left: 4px solid #ff6f61;
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    .pay-button {
+      display: block;
+      margin: 1rem auto 0;
+      padding: 0.7rem 1.5rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    footer p {
+      margin: 0.3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍽️ Flavour Fusion</h1>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#cart">Cart</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="home">
+    <h2>🍜 Welcome to Flavour Fusion!</h2>
+    <p>📍 Location: Srikakulam, Andhra Pradesh</p>
+    <p>🌟 Delight your taste buds with our delicious menu made with love and top-quality ingredients!</p>
+  </section>
+
+  <section id="menu">
+    <h2>📋 Menu</h2>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍 Search for a dish..." onkeyup="searchMenu()" />
+    </div>
+    <div class="menu-filters">
+      <button onclick="filterMenu('all')">All</button>
+      <button onclick="filterMenu('veg')">🌱 Veg</button>
+      <button onclick="filterMenu('nonveg')">🍗 Non-Veg</button>
+    </div>
+    <div class="menu-list" id="menu-list"></div>
+  </section>
+
+  <section id="cart">
+    <h2>🛒 Cart</h2>
+    <ul id="cart-list"></ul>
+    <p><strong>Total:</strong> ₹<span id="total">0</span></p>
+    <button class="pay-button" onclick="proceedToPayment()">💳 Proceed to Payment</button>
+  </section>
+
+  <section id="reviews">
+    <h2>💬 Customer Reviews</h2>
+    <div class="review-box">
+      <p>⭐️⭐️⭐️⭐️⭐️ - “Best Chicken Biryani I’ve had in a long time. Great service too!” – Arjun 🍗</p>
+    </div>
+    <div class="review-box">
+      <p>⭐️⭐️⭐️⭐️ - “Loved the Paneer Butter Masala and the warm ambiance.” – Priya 🌿</p>
+    </div>
+    <div class="review-box">
+      <p>⭐️⭐️⭐️⭐️⭐️ - “Quick delivery, delicious fries! Will order again.” – Naveen 🍟</p>
+    </div>
+  </section>
+
+  <div class="popup" id="popup">✅ Item added to cart!</div>
+
+  <footer>
+    <p>© 2025 Flavour Fusion. All rights reserved.</p>
+    <p>📞 Contact: +91 98765 43210</p>
+    <p>📧 Email: support@flavourfusion.com</p>
+  </footer>
+
+  <script>
+    const menuItems = [
+      { name: 'Margherita Pizza', price: 150, type: 'veg', img: 'images/Margherita Pizza.jpg' },
+      { name: 'Veg Burger', price: 100, type: 'veg', img: 'images/burger.jpg' },
+      { name: 'Pasta Alfredo', price: 120, type: 'veg', img: 'images/pasta.jpg' },
+      { name: 'French Fries', price: 80, type: 'veg', img: 'images/fries.jpg' },
+      { name: 'Veg Biryani', price: 140, type: 'veg', img: 'images/Veg Biryani.jpg' },
+      { name: 'Chicken Biryani', price: 180, type: 'nonveg', img: 'images/Chicken Biryani.jpg' },
+      { name: 'Paneer Butter Masala', price: 160, type: 'veg', img: 'images/Paneer Butter Masala.jpg' },
+      { name: 'Gulab Jamun', price: 60, type: 'veg', img: 'images/Gulab Jamun.jpg' },
+    ];
+
+    let cart = [];
+    let currentFilter = 'all';
+
+    function renderMenu(filter = 'all', searchText = '') {
+      const menuList = document.getElementById('menu-list');
+      menuList.innerHTML = '';
+      menuItems.filter(item => {
+        return (filter === 'all' || item.type === filter) &&
+               item.name.toLowerCase().includes(searchText.toLowerCase());
+      }).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'menu-item';
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}" />
+          <div class="menu-info">
+            <h3>${item.name}</h3>
+            <p>₹${item.price}</p>
+          </div>
+          <input type="number" min="1" value="1" id="qty-${item.name}" />
+          <button onclick="addToCart('${item.name}', ${item.price})">Add</button>
+        `;
+        menuList.appendChild(div);
+      });
+    }
+
+    function searchMenu() {
+      const input = document.getElementById('searchInput');
+      const value = input.value;
+      renderMenu(currentFilter, value);
+    }
+
+    function addToCart(name, price) {
+      const qtyInput = document.getElementById(`qty-${name}`);
+      const qty = parseInt(qtyInput.value);
+      const existing = cart.find(i => i.name === name);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        cart.push({ name, price, qty });
+      }
+      updateCart();
+      showPopup();
+    }
+
+    function updateCart() {
+      const cartList = document.getElementById('cart-list');
+      const total = document.getElementById('total');
+      cartList.innerHTML = '';
+      let sum = 0;
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} × ${item.qty} = ₹${item.qty * item.price}`;
+        cartList.appendChild(li);
+        sum += item.qty * item.price;
+      });
+      total.textContent = sum;
+    }
+
+    function filterMenu(type) {
+      currentFilter = type;
+      renderMenu(currentFilter, document.getElementById('searchInput').value);
+    }
+
+    function showPopup() {
+      const popup = document.getElementById('popup');
+      popup.style.display = 'block';
+      setTimeout(() => popup.style.display = 'none', 1500);
+    }
+
+    function proceedToPayment() {
+      const tableNumber = prompt('🍽️ Please enter your table number:');
+      if (!tableNumber || isNaN(tableNumber)) {
+        alert('❗ Please enter a valid table number.');
+        return;
+      }
+      const paymentOption = confirm('💳 Would you like to pay via scanner?\nPress OK to pay via scanner or Cancel to pay at the cashier.');
+      if (!paymentOption) {
+        alert('🪑 Please proceed to the cashier for dine-in payment. Thank you!');
+        return;
+      }
+      let qrWindow = window.open('', 'Scanner', 'height=500,width=400');
+      qrWindow.document.write('<html><head><title>Scan to Pay</title><style>body{font-family: Arial; text-align: center; padding: 20px;} h2{color:#28a745;} img{max-width: 300px; margin: 20px auto; display: block;} button{padding: 10px 20px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer;}</style></head><body>');
+      qrWindow.document.write('<h2>📱 Scan the QR to Pay</h2>');
+      qrWindow.document.write('<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=restaurant@upi&pn=FlavourFusion" alt="Scan QR">');
+      qrWindow.document.write(`<button onclick="window.opener.postMessage({ table: '${tableNumber}' }, '*'); window.close();">✅ Payment Done</button>`);
+      qrWindow.document.write('</body></html>');
+      qrWindow.document.close();
+    }
+
+    function generateBill(tableNumber) {
+      let billContent = '<html><head><title>Order Summary</title><style>body{font-family: Arial; padding: 20px;} h1{font-size: 1.5rem; text-align: center;} h2{color:#ff6f61;} ul{list-style:none;padding:0;} li{margin-bottom:5px;} .note{margin-top:1rem;font-style:italic;color:green;} img.logo{width: 100px; display: block; margin: 0 auto 10px;} .final{margin-top:1rem; text-align:center; color:#444;}</style></head><body>';
+      billContent += '<img class="logo" src="logo.png" alt="FF Logo">';
+      billContent += '<h1>🍴 Flavour Fusion Restaurant</h1>';
+      billContent += `<h2>🧾 Order Summary (Table ${tableNumber})</h2>`;
+      let total = 0;
+      billContent += '<ul>';
+      cart.forEach(item => {
+        const itemTotal = item.qty * item.price;
+        billContent += `<li>• ${item.name} × ${item.qty} = ₹${itemTotal}</li>`;
+        total += itemTotal;
+      });
+      billContent += '</ul>';
+      billContent += `<p><strong>Total: ₹${total}</strong></p>`;
+      billContent += '<p class="note">✅ Payment confirmed via scanner. Thank you for dining with us!</p>';
+      billContent += '<p class="final">⌛ Please wait while your order is being prepared.<br>🙏 Thank you for your patience!</p>';
+      const blob = new Blob([billContent + '</body></html>'], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = `FlavourFusion_Receipt_Table${tableNumber}.html`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      let summaryWindow = window.open('', 'Print Receipt', 'height=600,width=400');
+      summaryWindow.document.write(billContent);
+      summaryWindow.document.write('</body></html>');
+      summaryWindow.document.close();
+      summaryWindow.print();
+    }
+
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.table) {
+        generateBill(event.data.table);
+      }
+    });
+
+    renderMenu();
+  </script>
+</body>
+ <script>
+    function generateBill(tableNumber) {
+      let billContent = '<html><head><title>Order Summary</title><style>body{font-family: Arial; padding: 20px;} h1{font-size: 1.5rem; text-align: center;} h2{color:#ff6f61;} ul{list-style:none;padding:0;} li{margin-bottom:5px;} .note{margin-top:1rem;font-style:italic;color:green;} .final{margin-top:1rem; text-align:center; color:#444;}</style></head><body>';
+      billContent += '<h1>🍴 Flavour Fusion Restaurant</h1>';
+      billContent += `<h2>🧾 Order Summary (Table ${tableNumber})</h2>`;
+      let total = 0;
+      billContent += '<ul>';
+      cart.forEach(item => {
+        const itemTotal = item.qty * item.price;
+        billContent += `<li>• ${item.name} × ${item.qty} = ₹${itemTotal}</li>`;
+        total += itemTotal;
+      });
+      billContent += '</ul>';
+      billContent += `<p><strong>Total: ₹${total}</strong></p>`;
+      billContent += '<p class="note">✅ Payment confirmed via scanner. Thank you for dining with us!</p>';
+      billContent += '<p class="final">⌛ Please wait while your order is being prepared.<br>🙏 Thank you for your patience!</p>';
+
+      const blob = new Blob([billContent + '</body></html>'], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = `FlavourFusion_Receipt_Table${tableNumber}.html`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+
+      let summaryWindow = window.open('', 'Print Receipt', 'height=600,width=400');
+      summaryWindow.document.write(billContent);
+      summaryWindow.document.write('</body></html>');
+      summaryWindow.document.close();
+      summaryWindow.print();
+    }
+  </script>
+</body>
+</html>
